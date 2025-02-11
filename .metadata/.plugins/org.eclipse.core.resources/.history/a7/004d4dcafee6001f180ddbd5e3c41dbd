@@ -1,0 +1,34 @@
+package com.project.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class BloodRequest {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+//    @ManyToOne
+//    @JoinColumn(name = "hospital_id", nullable = false)
+//    private User hospital;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "hospital_id", nullable = false)
+    private User hospital;
+
+
+    @Enumerated(EnumType.STRING)
+    private BloodType bloodType;
+
+    private int quantity; // Requested quantity
+
+    private int remainingQuantity; // Track how much is still needed
+
+    @Enumerated(EnumType.STRING)
+    private BloodRequestStatus status;
+}

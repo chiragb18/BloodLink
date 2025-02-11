@@ -1,0 +1,46 @@
+package com.project.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.project.entity.BloodDonationRequest;
+import com.project.repository.BloodDonationRequestRepository;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class CertificateService {
+
+    @Autowired
+    private BloodDonationRequestRepository bloodDonationRequestRepository;
+
+    // Method to generate certificate for a donor who made approved donations in the past 3 months
+    public String generateCertificateForDonor(Long donorId) {
+        // Get the current date
+        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
+        
+        // Fetch all approved donation requests for the donor
+        List<BloodDonationRequest> approvedRequests = bloodDonationRequestRepository.findByDonorIdAndApprovalStatusAndDonationDateAfter(
+            donorId, 
+            "APPROVED",  // Assuming 'APPROVED' is a status for approved requests
+            threeMonthsAgo
+        );
+        
+        if (approvedRequests.isEmpty()) {
+            return null;  // No approved requests in the last 3 months
+        }
+
+        // Generate the certificate text
+        String certificateText = "Certificate of Appreciation\n";
+        certificateText += "This is to certify that the donor with ID " + donorId + " has made approved blood donations as follows:\n";
+
+        for (BloodDonationRequest request : approvedRequests) {
+            certificateText += "Donation Date: " + request.getRequestDate() + "\n";
+            // Add more donation details if needed
+        }
+
+        certificateText += "Thank you for your generous contribution to saving lives!";
+        return certificateText;
+    }
+}

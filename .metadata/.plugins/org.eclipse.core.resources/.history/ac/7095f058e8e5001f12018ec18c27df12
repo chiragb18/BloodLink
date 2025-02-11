@@ -1,0 +1,18 @@
+package com.project.repository;
+
+import com.project.entity.BloodDonationRequest;
+import com.project.entity.DonationStatus;
+import com.project.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public interface BloodDonationRequestRepository extends JpaRepository<BloodDonationRequest, Long> {
+    List<BloodDonationRequest> findByDonor(User donor);
+    List<BloodDonationRequest> findByStatus(DonationStatus status);
+	boolean existsByDonorAndStatusAndRequestDateAfter(User donor, DonationStatus approved, LocalDate oneMonthAgo);
+	 // Custom query to fetch approved donations for a donor within the last 3 months
+    List<BloodDonationRequest> findByDonorIdAndApprovalStatusAndDonationDateAfter(
+            Long donorId, String approvalStatus, LocalDate donationDate);
+}
